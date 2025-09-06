@@ -26,6 +26,8 @@ const Home = () => {
 
   // Get all products (API + local) and apply filters
   const allProducts = getAllProducts();
+
+  // Apply client-side filtering for search and category
   const filteredProducts = allProducts.filter((product) => {
     const matchesSearch =
       !searchQuery ||

@@ -15,6 +15,18 @@ const productReducer = (state, action) => {
       return { ...state, loading: action.payload };
     case "SET_PRODUCTS":
       return { ...state, products: action.payload, loading: false };
+    case "APPEND_PRODUCTS":
+      console.log(
+        "Appending products, current count:",
+        state.products.length,
+        "new products:",
+        action.payload.length
+      );
+      return {
+        ...state,
+        products: [...state.products, ...action.payload],
+        loading: false,
+      };
     case "SET_CATEGORIES":
       return { ...state, categories: action.payload };
     case "SET_SEARCH_QUERY":
@@ -92,13 +104,25 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  const loadProducts = async (searchQuery = "", category = "all", skip = 0) => {
+  const loadProducts = async (
+    searchQuery = "",
+    category = "all",
+    skip = 0,
+    append = false
+  ) => {
     dispatch({ type: "SET_LOADING", payload: true });
     dispatch({ type: "SET_ERROR", payload: null });
 
     try {
       const data = await fetchProducts(20, skip, searchQuery, category);
-      dispatch({ type: "SET_PRODUCTS", payload: data.products });
+
+      // Use APPEND_PRODUCTS if loading more, SET_PRODUCTS if starting fresh
+      if (append) {
+        dispatch({ type: "APPEND_PRODUCTS", payload: data.products });
+      } else {
+        dispatch({ type: "SET_PRODUCTS", payload: data.products });
+      }
+
       dispatch({
         type: "SET_PAGINATION",
         payload: {
@@ -125,7 +149,13 @@ export const ProductProvider = ({ children }) => {
   const loadMoreProducts = () => {
     const nextSkip = state.pagination.skip + state.pagination.limit;
     if (nextSkip < state.pagination.total) {
-      loadProducts(state.searchQuery, state.selectedCategory, nextSkip);
+      console.log(
+        "Loading more products, current count:",
+        state.products.length,
+        "next skip:",
+        nextSkip
+      );
+      loadProducts(state.searchQuery, state.selectedCategory, nextSkip, true);
     }
   };
 

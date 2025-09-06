@@ -62,7 +62,7 @@ const Navbar = () => {
             {isAuthenticated && (
               <Link
                 to="/cart"
-                className="relative p-2 text-gray-700 hover:text-primary-600 transition-colors"
+                className="relative p-3 text-gray-700 hover:text-primary-600 transition-colors bg-gray-50 hover:bg-gray-100 rounded-full"
               >
                 <svg
                   className="w-6 h-6"
@@ -78,8 +78,8 @@ const Navbar = () => {
                   />
                 </svg>
                 {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {itemCount}
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-lg animate-pulse">
+                    {itemCount > 99 ? "99+" : itemCount}
                   </span>
                 )}
               </Link>

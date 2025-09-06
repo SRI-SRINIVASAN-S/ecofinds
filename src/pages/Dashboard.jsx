@@ -23,6 +23,19 @@ const Dashboard = () => {
   };
 
   const handleSave = () => {
+    // Validate email is required
+    if (!formData.email || formData.email.trim() === "") {
+      toast.error("Email is required!");
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address!");
+      return;
+    }
+
     updateProfile(formData);
     setIsEditing(false);
     toast.success("Profile updated successfully!");
@@ -96,18 +109,41 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
+                    Email <span className="text-red-500">*</span>
                   </label>
                   {isEditing ? (
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    />
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="Enter your email address"
+                      />
+                      {(!formData.email || formData.email.trim() === "") && (
+                        <p className="text-red-500 text-xs mt-1">
+                          Email is required
+                        </p>
+                      )}
+                    </div>
                   ) : (
-                    <p className="text-gray-900">{user?.email}</p>
+                    <div>
+                      <p
+                        className={`${
+                          !user?.email ? "text-red-500 italic" : "text-gray-900"
+                        }`}
+                      >
+                        {user?.email ||
+                          "No email provided - Please add your email"}
+                      </p>
+                      {!user?.email && (
+                        <p className="text-red-500 text-xs mt-1">
+                          Email is required for account security
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
 
